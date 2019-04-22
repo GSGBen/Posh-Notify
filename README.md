@@ -1,6 +1,6 @@
 # Posh-Notify
 
-Send yourself or your team notifications from within a powershell script. Alert when a task is done or something needs attention. Keep a list of all actions.
+Send yourself or your team notifications from within a powershell script. Alert when a task is done or something needs attention. Keep a list of all actions. Play audible beeps when a local task has finished.
 
 ## Usage
 
@@ -13,11 +13,15 @@ $Global:TeamsWebhook = "<webhook from teams channel>"
 # set a default mailbox to send to
 $Global:OutlookWebhook = "<webhook from OWA (see below)>"
 
-# use
+# send messages
 Notify-Teams "test"
 Get-ChildItem | Notify-Teams -Webhook "<different channel's webhook>"
 Notify-Outlook "test"
 # etc
+
+# play sounds on completion
+Start-LongTask; Beep 2000 500
+Wait-ForThingsToFinish; Arpeggio
 ```
 
 ## Getting a Teams webhook
