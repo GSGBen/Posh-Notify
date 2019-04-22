@@ -32,7 +32,7 @@
     * Email: ben@goldensyrupgames.com
     * From: https://github.com/GSGBen/Posh-Notify
 #>
-function Send-TeamsNotification
+function Send-Office365Notification
 {
     Param
     (
@@ -235,8 +235,14 @@ function Send-DiscordNotification
 
 #region----------ALIASES
 
-    New-Alias -Name Notify-Teams -Value Send-TeamsNotification
+    New-Alias -Name Notify-Office365 -Value Send-Office365Notification
+    New-Alias -Name Send-TeamsNotification -Value Send-Office365Notification
+    New-Alias -Name Notify-Teams -Value Send-Office365Notification
+    New-Alias -Name Send-OutlookNotification -Value Send-Office365Notification
+    New-Alias -Name Notify-Outlook -Value Send-Office365Notification
+
     New-Alias -Name Notify-Discord -Value Send-DiscordNotification
+    
     Export-ModuleMember -Alias *
 
 #endregion
