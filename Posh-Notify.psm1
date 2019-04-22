@@ -1,27 +1,19 @@
 <#
 .synopsis
-    * Posts a message to a Microsoft Teams channel via webhook
+    * Posts a message to a Microsoft Office 365 service via webhook
 .description
-    * Posts a message to a Microsoft Teams channel via webhook
-      * Discord webhooks specify both the user posting it and the channel
+    * Posts a message to a Microsoft Office 365 service via webhook
     * Not sure of the max character limit, so truncating is disabled
     * Supports Text and Title via argument. Other Office 365 card attributes can be added via properties in a hash table passed through to the AdditionalProperties argument
       * See https://messagecardplayground.azurewebsites.net/ for the valid attributes, with examples
-    * Selects the webhook to use in the following priority (first most preferred) order, with the aim of easiest use
-      * Webhook argument passed to function
-      * $TeamsWebhook
-      * if none of the above, it errors. No prompting because of the automation focus
+    * No default webhook - these are provided by wrapper functions like Send-TeamsNotification and Send-OutlookNotification
 .parameter Text
     * The text to display
     * Array, so works for array or single string
       * i.e. will send a table as easily as a line of text
     * Will concatenate array as new lines, not spaces
 .parameter Webhook
-    * The Webhook URL of the channel to post to
-    * To get this
-      * right click on the channel and select 'connectors'
-      * edit an existing webhook connector and get the url or
-      * add a new 'webhook' connector them get the url
+    * The Webhook URL of the service to post to
 .parameter AdditionalProperties
     * Construct a fancier card via additional options
       * See https://messagecardplayground.azurewebsites.net/ for the valid attributes, with examples
@@ -50,14 +42,10 @@ function Send-Office365Notification
     #only send after joining
     End{ 
 
-        #Specified webhook or global or fail
+        #Specified webhook or fail
         if ($Webhook)
         {
             $FinalWebhook = $Webhook
-        }
-        elseif ($TeamsWebhook)
-        {
-            $FinalWebhook = $TeamsWebhook
         }
         else
         {
@@ -92,30 +80,128 @@ function Send-Office365Notification
 
 <#
 .synopsis
-    * Posts a message to a Discord channel via webhook
+    * Posts a message to a Microsoft Teams channel via webhook
 .description
-    * Posts a message to a Discord channel via webhook
-      * Discord webhooks specify both the user posting it and the channel
-    * Max is 2000 chars
-      * By default this function will send the first 2000 characters (minus characters required for formatting). If you specify -LastChars it'll send the last 2000
-    * Should support Discord markdown formatting
-    * Uses $DiscordWebhook if no Webhook is specified
+    * Posts a message to a Microsoft Teams channel via webhook
+    * Not sure of the max character limit, so truncating is disabled
+    * Supports Text and Title via argument. Other Office 365 card attributes can be added via properties in a hash table passed through to the AdditionalProperties argument
+      * See https://messagecardplayground.azurewebsites.net/ for the valid attributes, with examples
+    * Selects the webhook to use in the following priority (first most preferred) order, with the aim of easiest use
+      * Webhook argument passed to function
+      * $TeamsWebhook
+        * e.g. set $Global:TeamsWebhook in your powershell profile as a default
+      * if none of the above, it errors. No prompting because of the automation focus
 .parameter Text
     * The text to display
     * Array, so works for array or single string
+      * i.e. will send a table as easily as a line of text
     * Will concatenate array as new lines, not spaces
 .parameter Webhook
     * The Webhook URL of the channel to post to
-.parameter LastChars
-    * By default this function will send the first 2000 characters (minus characters required for formatting). If you specify -LastChars it'll send the last 2000
-    * E.g. if you want as much info as possible from some output but definitely want the final result
-.parameter NoSeparators
-    * By default we separate messages with some basic formatting (e.g. ***). Specify this to not
+    * To get this
+      * right click on the channel and select 'connectors'
+      * edit an existing webhook connector and get the url or
+      * add a new 'webhook' connector them get the url
+.parameter AdditionalProperties
+    * Construct a fancier card via additional options
+      * See https://messagecardplayground.azurewebsites.net/ for the valid attributes, with examples
 .notes
+    * TODO:
+      * Implement AdditionalProperties
     * Author: Ben Renninson
     * Email: ben@goldensyrupgames.com
     * From: https://github.com/GSGBen/Posh-Notify
 #>
+function Send-TeamsNotification
+{
+    Param
+    (
+        [Parameter(Position=0,Mandatory=$true,ValueFromPipeline=$true)][string[]]$Text,
+        [Parameter(Position=1,Mandatory=$false)][string]$Title,
+        [Parameter(Position=2,Mandatory=$false)][string]$Webhook,
+        [Parameter(Position=3,Mandatory=$false)][System.Collections.IDictionary]$AdditionalProperties
+    )
+
+    #Specified webhook or global or fail
+    if ($Webhook)
+    {
+        $FinalWebhook = $Webhook
+    }
+    elseif ($TeamsWebhook)
+    {
+        $FinalWebhook = $TeamsWebhook
+    }
+    else
+    {
+        Write-Error "No webhook specified and `$TeamsWebhook not set!"
+        return
+    }
+
+    Send-Office365Notification -Text $Text -Title $Title -Webhook $FinalWebhook -AdditionalProperties $AdditionalProperties
+}
+
+<#
+.synopsis
+    * Posts a message to a Microsoft Office 365 Outlook mailbox via webhook
+.description
+    * Posts a message to a Microsoft Office 365 Outlook mailbox via webhook
+    * Not sure of the max character limit, so truncating is disabled
+    * Supports Text and Title via argument. Other Office 365 card attributes can be added via properties in a hash table passed through to the AdditionalProperties argument
+      * See https://messagecardplayground.azurewebsites.net/ for the valid attributes, with examples
+    * Selects the webhook to use in the following priority (first most preferred) order, with the aim of easiest use
+      * Webhook argument passed to function
+      * $OutlookWebhook
+        * e.g. set $Global:OutlookWebhook in your powershell profile as a default
+      * if none of the above, it errors. No prompting because of the automation focus
+.parameter Text
+    * The text to display
+    * Array, so works for array or single string
+      * i.e. will send a table as easily as a line of text
+    * Will concatenate array as new lines, not spaces
+.parameter Webhook
+    * The Webhook URL of the mailbox to post to
+    * To get this
+      * log into https://outlook.office365.com/owa
+      * Select the gear icon in the top right hand corner
+      * manage connectors
+      * add a new 'webhook' connector them get the url
+.parameter AdditionalProperties
+    * Construct a fancier card via additional options
+      * See https://messagecardplayground.azurewebsites.net/ for the valid attributes, with examples
+.notes
+    * TODO:
+      * Implement AdditionalProperties
+    * Author: Ben Renninson
+    * Email: ben@goldensyrupgames.com
+    * From: https://github.com/GSGBen/Posh-Notify
+#>
+function Send-OutlookNotification
+{
+    Param
+    (
+        [Parameter(Position=0,Mandatory=$true,ValueFromPipeline=$true)][string[]]$Text,
+        [Parameter(Position=1,Mandatory=$false)][string]$Title,
+        [Parameter(Position=2,Mandatory=$false)][string]$Webhook,
+        [Parameter(Position=3,Mandatory=$false)][System.Collections.IDictionary]$AdditionalProperties
+    )
+
+    #Specified webhook or global or fail
+    if ($Webhook)
+    {
+        $FinalWebhook = $Webhook
+    }
+    elseif ($TeamsWebhook)
+    {
+        $FinalWebhook = $OutlookWebhook
+    }
+    else
+    {
+        Write-Error "No webhook specified and `$OutlookWebhook not set!"
+        return
+    }
+
+    Send-Office365Notification -Text $Text -Title $Title -Webhook $FinalWebhook -AdditionalProperties $AdditionalProperties
+}
 
 <#
 .synopsis
@@ -236,10 +322,8 @@ function Send-DiscordNotification
 #region----------ALIASES
 
     New-Alias -Name Notify-Office365 -Value Send-Office365Notification
-    New-Alias -Name Send-TeamsNotification -Value Send-Office365Notification
-    New-Alias -Name Notify-Teams -Value Send-Office365Notification
-    New-Alias -Name Send-OutlookNotification -Value Send-Office365Notification
-    New-Alias -Name Notify-Outlook -Value Send-Office365Notification
+    New-Alias -Name Notify-Teams -Value Send-TeamsNotification
+    New-Alias -Name Notify-Outlook -Value Send-OutlookNotification
 
     New-Alias -Name Notify-Discord -Value Send-DiscordNotification
     
