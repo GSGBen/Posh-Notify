@@ -231,7 +231,7 @@ function Send-OutlookNotification
 .notes
     Author: Ben Renninson
     Email: ben@goldensyrupgames.com
-    From: https://github.com/GSGBen/powershell
+    From: https://github.com/GSGBen/Posh-Notify
 #>
 function Send-DiscordNotification
 {
@@ -318,6 +318,56 @@ function Send-DiscordNotification
     #Send the text to the webhook
     Invoke-RestMethod -ContentType "application/json" -Body $BodyAsJson -Method Post -URI $FinalWebhook
 }
+
+<#
+.synopsis
+    * Plays a notification beep
+.description
+    * *BEEEEEEEEP*
+.parameter Pitch
+    * 2000 is kinda high and audible. The default.
+    * Nothing below 190
+.parameter Length
+    * 500 is reasonable. The default.
+.notes
+    * Author: Ben Renninson
+    * Email: ben@goldensyrupgames.com
+    * From: https://github.com/GSGBen/Posh-Notify
+#>
+function Beep
+{
+    Param
+    (
+        [Parameter(Position=0,Mandatory=$false,ValueFromPipeline=$true)][int]$Pitch = 2000,
+        [Parameter(Position=1,Mandatory=$false)][int]$Length = 500
+    )
+
+    [console]::beep($Pitch,$Length)
+}
+
+<#
+.synopsis
+    * Plays a notification Arpeggio
+.description
+    * *BEEEEEEEEP*
+.notes
+    * Author: Ben Renninson
+    * Email: ben@goldensyrupgames.com
+    * From: https://github.com/GSGBen/Posh-Notify
+#>
+function Arpeggio
+{
+    Param
+    (
+        [Parameter(Position=0,Mandatory=$false,ValueFromPipeline=$true)][int]$Pitch = 2000,
+        [Parameter(Position=1,Mandatory=$false)][int]$Length = 500
+    )
+
+    Beep 880     300
+    Beep 1108.73 300
+    Beep 1318.51 300
+    Beep 1760    300
+}     
 
 #region----------ALIASES
 
