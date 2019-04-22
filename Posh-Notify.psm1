@@ -32,7 +32,7 @@
     * Email: ben@goldensyrupgames.com
     * From: https://github.com/GSGBen/Posh-Notify
 #>
-function Notify-Teams
+function Send-TeamsNotification
 {
     Param
     (
@@ -147,7 +147,7 @@ function Notify-Teams
     Email: ben@goldensyrupgames.com
     From: https://github.com/GSGBen/powershell
 #>
-function Notify-Discord
+function Send-DiscordNotification
 {
     Param
     (
@@ -235,8 +235,8 @@ function Notify-Discord
 
 #region----------ALIASES
 
-    New-Alias -Name Send-TeamsNotification -Value Notify-Teams
-    New-Alias -Name Send-DiscordNotification -Value Notify-Discord
+    New-Alias -Name Notify-Teams -Value Send-TeamsNotification
+    New-Alias -Name Notify-Discord -Value Send-DiscordNotification
     Export-ModuleMember -Alias *
 
 #endregion
