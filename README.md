@@ -4,12 +4,15 @@ Send yourself or your team notifications from within a powershell script. Alert 
 
 ## Usage
 
-```
+```powershell
+# get the module
 Install-Module Posh-Notify
 
-$TeamsWebhook = <webhook from teams channel>
+# set a default channel to send to
+$Global:TeamsWebhook = "<webhook from teams channel>"
 
+# use
 Notify-Teams "test"
-Get-ChildItem | Notify-Teams
-etc
+Get-ChildItem | Notify-Teams -Webhook "<different channel's webhook>"
+# etc
 ```
