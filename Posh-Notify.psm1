@@ -19,6 +19,7 @@
       * See https://messagecardplayground.azurewebsites.net/ for the valid attributes, with examples
 .notes
     * TODO:
+      * Support \r\n line endings
       * Implement AdditionalProperties
     * Author: Ben Renninson
     * Email: ben@goldensyrupgames.com
@@ -37,7 +38,9 @@ function Send-Office365Notification
     #Join each element that may be passed through in the pipeline
     Process{
         #If passed through the pipeline, join to a single array
-        $CombinedArray += $Text
+        # after making sure there are no empty lines,
+        # and breaking up multi-line strings - the formatting below needs an array of single strings
+        $CombinedArray += $Text -replace '\n\n',"`n `n" -split "`n"
     }
     #only send after joining
     End{ 
