@@ -372,6 +372,26 @@ function Arpeggio
     Beep 1760    300
 }     
 
+<#
+.synopsis
+    * Plays a built-in windows success sound
+.description
+    * *TADA*
+.notes
+    * Author: Ben Renninson
+    * Email: ben@goldensyrupgames.com
+    * From: https://github.com/GSGBen/Posh-Notify
+#>
+function Tada
+{
+
+    $PlayWav = New-Object System.Media.SoundPlayer
+    $PlayWav.SoundLocation = "C:\Windows\media\tada.wav"
+    $PlayWav.playsync()
+
+}     
+
+
 #region----------ALIASES
 
     New-Alias -Name Notify-Office365 -Value Send-Office365Notification
